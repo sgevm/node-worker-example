@@ -18,8 +18,12 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function start() {
+function start(id, disconnect) {
   console.log(`start() : Started worker ${ id }`);
+
+  process.once('SIGTERM', shutdown);
+  process.once('SIGINT', shutdown);
+
   // Connect to the named work queue
   let workQueue = new Queue('work', REDIS_URL);
 
@@ -37,6 +41,11 @@ function start() {
       await sleep(50);
       progress += 1;
       job.progress(progress)
+    }
+
+    function shutdown() {
+      console.log(`Worker ${ id } cleanup.`);
+      disconnect();
     }
 
     // A job can return values that will be stored in Redis as JSON
