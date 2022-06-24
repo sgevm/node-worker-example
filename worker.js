@@ -42,16 +42,15 @@ function start(id, disconnect) {
       progress += 1;
       job.progress(progress)
     }
-
-    function shutdown() {
-      console.log(`Worker ${ id } cleanup.`);
-      disconnect();
-    }
-
     // A job can return values that will be stored in Redis as JSON
     // This return value is unused in this demo application.
     return { value: "This will be stored" };
   });
+
+  function shutdown() {
+    console.log(`Worker ${ id } cleanup.`);
+    disconnect();
+  }  
 }
 
 // Initialize the clustered worker process
